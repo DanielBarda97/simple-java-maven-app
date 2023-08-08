@@ -9,7 +9,9 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Increment patch version
       id: version
       run: |
