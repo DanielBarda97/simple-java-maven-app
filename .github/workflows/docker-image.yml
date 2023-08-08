@@ -18,12 +18,14 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.version.outputs.version }}
-        release_name: Release ${{ steps.version.outputs.version }}
-        body: Release ${{ steps.version.outputs.version }}
+    - name: Test
+      run: echo ${{steps.version.outputs.version}}
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ steps.version.outputs.version }}
+    #     release_name: Release ${{ steps.version.outputs.version }}
+    #     body: Release ${{ steps.version.outputs.version }}
