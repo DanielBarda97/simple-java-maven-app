@@ -15,6 +15,7 @@ jobs:
       id: bump
       uses: nnichols/maven-version-bump-action@v3
       with:
+        pom-path: ./
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Test
