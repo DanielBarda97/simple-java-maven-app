@@ -59,5 +59,4 @@ jobs:
           sudo docker run -d --name my-app ${{steps.version.outputs.new_version}}
 
     - name: Docker Logout
-      if: '!cancelled()'
       run: docker logout ghcr.io || true
