@@ -28,7 +28,7 @@ jobs:
         NEW_VERSION=${steps.version.outputs.new_version}
         mvn -q versions:set -DnewVersion="$NEW_VERSION"
         git add ./pom.xml
-        git commit -m "Bump pom.xml from $OLD_VERSION to $NEW_VERSION"
+        git commit -m "Bump pom.xml to version $NEW_VERSION"
         git tag $NEW_VERSION
         git push --follow-tags
         git push --tags
