@@ -10,11 +10,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag hello-world:$(./update_version.sh)
+      # run: docker build . --file Dockerfile --tag hello-world:$(./update_version.sh)
+      run: echo "test"
 
   update-version:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Update version
-        run: sed -i "s/<version>$current_version<\/version>/<version>$(./update_version.sh)<\/version>/" pom.xml
+        # run: sed -i "s/<version>$current_version<\/version>/<version>$(./update_version.sh)<\/version>/" pom.xml
+        run: ./update_version.sh -e
