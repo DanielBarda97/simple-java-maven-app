@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -14,9 +13,9 @@ jobs:
 
     - name: Increment patch version
       id: version
-      run: |
-        echo "new_version=$(./update_version.sh -e)" >> "$GITHUB_OUTPUT"
-        ./update_version.sh -r
+      uses: nnichols/maven-version-bump-action@v3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Release
       id: create_release
@@ -24,9 +23,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.version.outputs.new_version }}
-        release_name: Release ${{ steps.version.outputs.new_version }}
-        body: Release ${{ steps.version.outputs.new_version }}
-
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag hello-world:${{ steps.version.outputs.new_version }}
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: Release ${{ steps.version.outputs.version }}
+        body: Release ${{ steps.version.outputs.version }}
