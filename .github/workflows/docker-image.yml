@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Maven on Docker CI
 
 on:
   push:
@@ -14,24 +14,32 @@ jobs:
 
     - name: Get new version
       id: version
-      run: |
-        echo "new_version=$(./bump_patch.sh)" >> $GITHUB_OUTPUT
+      run: echo "new_version=$(./bump_patch.sh)" >> $GITHUB_OUTPUT
 
-    - name: Bump new version
-      run: |
-        REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        mvn -q versions:set -DnewVersion="${{steps.version.outputs.new_version}}"
+    - name: Set image name
+      id: image_name
+      run: echo "image_name=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):steps.version.outputs.new_version" >> $GITHUB_OUTPUT
 
-    # - name: test
+    - name: test
+      run: echo ${{steps.image_name.outputs.image_name}}
+
+    # - name: Bump new version
     #   run: |
-    #     echo ${{steps.version.outputs.new_version}}
+    #     REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
+    #     mvn -q versions:set -DnewVersion="${{steps.version.outputs.new_version}}"
+
+    # - name: Run tests
+    #   run: docker build --target tests -t test-image .
+
+    # - name: Build production image
+    #   run: docker build --target builder -t ${{steps.image_name.outputs.image_name}} .
     
-    - name: Create release commit
-      run: |
-        git config --global user.email "<>"
-        git config --global user.name "${{github.actor}}"
-        git add ./pom.xml
-        git commit -m "Release ${{steps.version.outputs.new_version}}"
-        git tag ${{steps.version.outputs.new_version}}
-        git push --follow-tags
-        git push --tags
+    # - name: Make release tag & commit
+    #   run: |
+    #     git config --global user.email "<>"
+    #     git config --global user.name "${{github.actor}}"
+    #     git add ./pom.xml
+    #     git commit -m "Release ${{steps.version.outputs.new_version}}"
+    #     git tag ${{steps.version.outputs.new_version}}
+    #     git push --follow-tags
+    #     git push --tags
