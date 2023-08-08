@@ -12,14 +12,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # - name: test
-    #   run: |
-    #     echo ${{secrets.GIT_USER_EMAIL}}
+    - name: test
+      run: |
+        echo ${{secrets.GIT_USER_EMAIL}}
 
     - name: Get new version
       id: version
       run: |
-        echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
+        echo "{new_version}={$(./bump_patch.sh)}" >> $GITHUB_OUTPUT
 
     - name: Bump new version
       run: |
