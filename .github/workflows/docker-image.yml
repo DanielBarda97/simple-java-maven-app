@@ -15,7 +15,8 @@ jobs:
     - name: Increment patch version
       id: version
       run: |
-        mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+        echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
+        mvn -q versions:set -DnewVersion="${steps.version.outputs.new_version}"
         
 
     # - name: Create Release
