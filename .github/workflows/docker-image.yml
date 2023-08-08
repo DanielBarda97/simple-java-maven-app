@@ -18,7 +18,7 @@ jobs:
 
     - name: Set image name
       id: image_name
-      run: echo "image_name=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):steps.version.outputs.new_version" >> $GITHUB_OUTPUT
+      run: echo "image_name=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):${{steps.version.outputs.new_version}}" >> $GITHUB_OUTPUT
 
     - name: test
       run: echo ${{steps.image_name.outputs.image_name}}
