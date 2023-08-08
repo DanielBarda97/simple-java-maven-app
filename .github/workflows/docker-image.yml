@@ -15,7 +15,7 @@ jobs:
     - name: Get new version
       id: version
       run: |
-        echo "{new_version}={$(./bump_patch.sh)}" >> $GITHUB_OUTPUT
+        echo "new_version=$(./bump_patch.sh)" >> $GITHUB_OUTPUT
 
     - name: Bump new version
       run: |
