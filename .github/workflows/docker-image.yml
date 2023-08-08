@@ -12,25 +12,26 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: test
+    # - name: test
+    #   run: |
+    #     REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
+    #     echo $REPO
+
+    - name: Get new version
+      id: version
+      run: |
+        echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
+
+    - name: Bump new version
       run: |
         REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        echo $REPO
-
-    # - name: Get new version
-    #   id: version
-    #   run: |
-    #     echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
-
-    # - name: Bump new version
-    #   run: |
-    #     mvn -q versions:set -DnewVersion="${steps.version.outputs.new_version}"
-    #     git add ./pom.xml
-    #     REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-    #     git commit -m "Bump pom.xml from $OLD_VERSION to $NEW_VERSION"
-    #     git tag $NEW_VERSION
-    #     git push --follow-tags
-    #     git push --tags
+        NEW_VERSION=${steps.version.outputs.new_version}
+        mvn -q versions:set -DnewVersion="$NEW_VERSION"
+        git add ./pom.xml
+        git commit -m "Bump pom.xml from $OLD_VERSION to $NEW_VERSION"
+        git tag $NEW_VERSION
+        git push --follow-tags
+        git push --tags
 
     # - name: Create Release
     #   id: create_release
