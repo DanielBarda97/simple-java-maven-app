@@ -14,7 +14,7 @@ jobs:
       id: version
       run: |
         echo "new_version=$(./update_version.sh -e)" >> "$GITHUB_OUTPUT"
-        ./update_version.sh -r
+        $(./update_version.sh -r)
 
     - name: Create Release
       id: create_release
@@ -24,8 +24,7 @@ jobs:
       with:
         tag_name: ${{ steps.version.outputs.new_version }}
         release_name: Release ${{ steps.version.outputs.new_version }}
-        body: |
-          Release ${{ steps.version.outputs.new_version }}
+        body: Release ${{ steps.version.outputs.new_version }}
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag hello-world:${{ steps.version.outputs.new_version }}
