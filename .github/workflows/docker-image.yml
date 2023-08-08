@@ -9,12 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Increment patch version
+      run: ./update_version.sh -r
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag hello-world:$(./update_version.sh -e)
-
-  update-version:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update version
-        run: ./update_version.sh -r

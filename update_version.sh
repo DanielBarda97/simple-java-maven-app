@@ -3,7 +3,7 @@
 show_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  -e, --echo      Echo the new version"
+    echo "  -e, --echo      Echo the current version"
     echo "  -r, --replace   Run sed to replace version in pom.xml"
     echo "  -h, --help      Show this help message"
 }
@@ -22,7 +22,7 @@ new_version="$major_version.$minor_version.$patch_version-SNAPSHOT"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -e|--echo)
-            echo "$new_version"
+            echo "$current_version"
             shift
             ;;
         -r|--replace)
