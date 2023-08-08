@@ -12,30 +12,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # - name: test
+    - name: test
+      run: |
+        echo $EMAIL
+
+    # - name: Get new version
+    #   id: version
+    #   run: |
+    #     echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
+
+    # - name: Bump new version
     #   run: |
     #     REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-    #     echo $REPO
-
-    - name: Get new version
-      id: version
-      run: |
-        echo "{new_version}={$(./bumb_patch.sh)}" >> $GITHUB_OUTPUT
-
-    - name: Bump new version
-      run: |
-        REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        mvn -q versions:set -DnewVersion="${{steps.version.outputs.new_version}}"
+    #     mvn -q versions:set -DnewVersion="${{steps.version.outputs.new_version}}"
     
-    - name: Push new version
-      run: |
-        git config --global user.email ${{ inputs.git-email }}
-        git config --global user.name ${{ inputs.git-username }}
-        git add ./pom.xml
-        git commit -m "Bump pom.xml to version ${{steps.version.outputs.new_version}}"
-        git tag ${{steps.version.outputs.new_version}}
-        git push --follow-tags
-        git push --tags
+    # - name: Push new version
+    #   run: |
+    #     git config --global user.email ${{ inputs.git-email }}
+    #     git config --global user.name ${{ inputs.git-username }}
+    #     git add ./pom.xml
+    #     git commit -m "Bump pom.xml to version ${{steps.version.outputs.new_version}}"
+    #     git tag ${{steps.version.outputs.new_version}}
+    #     git push --follow-tags
+    #     git push --tags
 
     # - name: Create Release
     #   id: create_release
