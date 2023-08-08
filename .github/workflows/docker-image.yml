@@ -28,10 +28,10 @@ jobs:
     
     - name: Create release commit
       run: |
-        git config --global user.email <>
-        git config --global user.name ${{github.actor}}
+        git config --global user.email "<>"
+        git config --global user.name "${{github.actor}}"
         git add ./pom.xml
-        git commit -m "Bump pom.xml to version ${{steps.version.outputs.new_version}}"
+        git commit -m "Release ${{steps.version.outputs.new_version}}"
         git tag ${{steps.version.outputs.new_version}}
         git push --follow-tags
         git push --tags
