@@ -25,11 +25,10 @@ jobs:
     - name: Bump new version
       run: |
         REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        NEW_VERSION=${steps.version.outputs.new_version}
-        mvn -q versions:set -DnewVersion="$NEW_VERSION"
+        mvn -q versions:set -DnewVersion="${steps.version.outputs.new_version}"
         git add ./pom.xml
-        git commit -m "Bump pom.xml to version $NEW_VERSION"
-        git tag $NEW_VERSION
+        git commit -m "Bump pom.xml to version ${steps.version.outputs.new_version}"
+        git tag ${steps.version.outputs.new_version}
         git push --follow-tags
         git push --tags
 
