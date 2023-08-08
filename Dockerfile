@@ -12,4 +12,4 @@ RUN mvn clean test
 
 FROM maven:3.8.6-openjdk-11-slim as production
 COPY --from=builder /app/target/*.jar /app/
-CMD ["bash", "-c", "java", "-jar", "/app/*.jar"]
+CMD bash -c "java -jar /app/*.jar"
