@@ -29,8 +29,13 @@ jobs:
       run: docker build --target tests -t test-image .
 
     - name: Build production image
-      run: docker build --target builder -t ${{steps.image_name.outputs.image_name}} .
-    
+      run: docker build --target builder -t ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}} .
+
+    - name: Publish docker-image to GHCR
+      run: |
+        docker login ghcr.io --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+        docker push ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}}
+
     - name: Make release tag & commit
       run: |
         git config --global user.email "<>"
@@ -40,8 +45,3 @@ jobs:
         git tag ${{steps.version.outputs.new_version}}
         git push --follow-tags
         git push --tags
-
-    - name: Publish docker-image to GHCR
-      run: |
-        docker login ghcr.io --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker push ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}}
