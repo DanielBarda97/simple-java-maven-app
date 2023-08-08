@@ -28,7 +28,7 @@ jobs:
       run: docker build --target tests -t test-image .
 
     - name: Build production image
-      run: docker build --target builder -t ${{steps.image_name.outputs.image_name}} .
+      run: docker build --target production -t ${{steps.image_name.outputs.image_name}} .
 
     - name: Publish docker-image to GHCR
       run: |
