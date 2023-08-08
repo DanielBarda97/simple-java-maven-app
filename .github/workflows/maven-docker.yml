@@ -1,4 +1,4 @@
-name: Maven on Docker CI
+name: Maven on Docker CI/CD
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -18,7 +17,7 @@ jobs:
 
     - name: Set image name
       id: image_name
-      run: echo "image_name=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):${{steps.version.outputs.new_version}}" >> $GITHUB_OUTPUT
+      run: echo "image_name=ghcr.io/danielbarda97/$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):${{steps.version.outputs.new_version}}" >> $GITHUB_OUTPUT
 
     - name: Bump new version
       run: |
@@ -29,12 +28,12 @@ jobs:
       run: docker build --target tests -t test-image .
 
     - name: Build production image
-      run: docker build --target builder -t ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}} .
+      run: docker build --target builder -t ${{steps.image_name.outputs.image_name}} .
 
     - name: Publish docker-image to GHCR
       run: |
         docker login ghcr.io --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker push ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}}
+        docker push ${{steps.image_name.outputs.image_name}}
 
     - name: Make release tag & commit
       run: |
@@ -45,3 +44,20 @@ jobs:
         git tag ${{steps.version.outputs.new_version}}
         git push --follow-tags
         git push --tags
+
+    - name: Deployment
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_IP }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker kill $(docker ps -aq) &>/dev/null || true
+          sudo docker rm $(docker ps -aq) &>/dev/null || true
+          sudo docker rmi $(docker images -q)
+          sudo docker pull ${{steps.version.outputs.new_version}}
+          sudo docker run -d --name my-app ${{steps.version.outputs.new_version}}
+
+    - name: Docker Logout
+      if: '!cancelled()'
+      run: docker logout ghcr.io || true
