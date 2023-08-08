@@ -14,7 +14,7 @@ jobs:
       id: version
       run: |
         echo "new_version=$(./update_version.sh -e)" >> "$GITHUB_OUTPUT"
-        $(./update_version.sh -r)
+        ./update_version.sh -r
 
     - name: Create Release
       id: create_release
