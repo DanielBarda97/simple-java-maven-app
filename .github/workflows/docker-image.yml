@@ -12,7 +12,7 @@ jobs:
     - name: Increment patch version
       id: version
       run: |
-        new_version=$(./update_version.sh -e)
+        echo "new_version=$(./update_version.sh -e)" >> "$GITHUB_OUTPUT"
         ./update_version.sh -r
 
     - name: Create Release
