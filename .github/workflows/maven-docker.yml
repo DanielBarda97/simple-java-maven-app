@@ -55,8 +55,8 @@ jobs:
           sudo docker kill $(docker ps -aq) &>/dev/null || true
           sudo docker rm $(docker ps -aq) &>/dev/null || true
           sudo docker rmi $(docker images -q)
-          sudo docker pull ${{steps.version.outputs.new_version}}
-          sudo docker run -d --name my-app ${{steps.version.outputs.new_version}}
+          sudo docker pull ${{steps.image_name.outputs.image_name}}
+          sudo docker run -d --name my-app ${{steps.image_name.outputs.image_name}}
 
     - name: Docker Logout
       run: docker logout ghcr.io || true
