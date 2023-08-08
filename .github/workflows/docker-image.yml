@@ -43,4 +43,5 @@ jobs:
 
     - name: Publish docker-image to GHCR
       run: |
+        docker login ghcr.io --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
         docker push ghcr.io/danielbarda97/${{steps.image_name.outputs.image_name}}
