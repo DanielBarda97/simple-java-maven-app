@@ -7,6 +7,7 @@ on:
 jobs:
   maven-docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -17,12 +18,12 @@ jobs:
 
     - name: Set image name
       id: image_name
-      run: echo "image_name=ghcr.io/danielbarda97/$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):${{steps.version.outputs.new_version}}" >> $GITHUB_OUTPUT
+      run: echo "image_name=ghcr.io/danielbarda97/$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout):${{ steps.version.outputs.new_version }}" >> $GITHUB_OUTPUT
 
     - name: Bump new version
       run: |
-        REPO="https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        mvn -q versions:set -DnewVersion="${{steps.version.outputs.new_version}}"
+        REPO="https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+        mvn -q versions:set -DnewVersion="${{ steps.version.outputs.new_version }}"
 
     - name: Run tests
       run: docker build --target tests -t test-image .
@@ -40,23 +41,24 @@ jobs:
         git config --global user.email "<>"
         git config --global user.name "${{github.actor}}"
         git add ./pom.xml
-        git commit -m "Release ${{steps.version.outputs.new_version}}"
-        git tag ${{steps.version.outputs.new_version}}
+        git commit -m "Release ${{ steps.version.outputs.new_version }}"
+        git tag ${{ steps.version.outputs.new_version }}
         git push --follow-tags
-        git push --tags
 
     - name: Deployment
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.EC2_IP }}
+        host: ${{ vars.EC2_IP }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
           sudo docker kill $(docker ps -aq) &>/dev/null || true
-          sudo docker rm $(docker ps -aq) &>/dev/null || true
-          sudo docker rmi $(docker images -q)
+          sudo docker system prune -af
+          # sudo docker rm $(docker ps -aq) &>/dev/null || true
+          # sudo docker rmi $(docker images -q)
           sudo docker pull ${{steps.image_name.outputs.image_name}}
           sudo docker run -d --name my-app ${{steps.image_name.outputs.image_name}}
 
     - name: Docker Logout
+      if: always()
       run: docker logout ghcr.io || true
