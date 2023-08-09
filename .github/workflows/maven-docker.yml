@@ -29,12 +29,12 @@ jobs:
       run: docker build --target tests -t test-image .
 
     - name: Build production image
-      run: docker build --target production -t ${{steps.image_name.outputs.image_name}} .
+      run: docker build --target production -t ${{ steps.image_name.outputs.image_name }} .
 
     - name: Publish docker-image to GHCR
       run: |
         docker login ghcr.io --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker push ${{steps.image_name.outputs.image_name}}
+        docker push ${{ steps.image_name.outputs.image_name }}
 
     - name: Make release tag & commit
       run: |
@@ -54,10 +54,8 @@ jobs:
         script: |
           sudo docker kill $(docker ps -aq) &>/dev/null || true
           sudo docker system prune -af
-          # sudo docker rm $(docker ps -aq) &>/dev/null || true
-          # sudo docker rmi $(docker images -q)
-          sudo docker pull ${{steps.image_name.outputs.image_name}}
-          sudo docker run -d --name my-app ${{steps.image_name.outputs.image_name}}
+          sudo docker pull ${{ steps.image_name.outputs.image_name }}
+          sudo docker run -d --name my-app ${{ steps.image_name.outputs.image_name }}
 
     - name: Docker Logout
       if: always()
